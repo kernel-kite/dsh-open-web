@@ -10,7 +10,7 @@
  * 用法：
  *   node scripts/check-env.mjs                 # 检查 desktop profile
  *   node scripts/check-env.mjs --profile web   # 检查别的 profile
- *   node scripts/check-env.mjs --exe "D:\\DeepSeek Harness\\DeepSeek Harness.exe"
+ *   node scripts/check-env.mjs --exe "D:\DeepSeek Harness\DeepSeek Harness.exe"
  *
  * 读 app.asar 需要 Electron 的 fs（普通 Node 读不了 asar 内的文件），
  * 所以如果发现自己在普通 Node 里，会用 `ELECTRON_RUN_AS_NODE=1` 重新执行自己。
@@ -68,7 +68,7 @@ function findDesktopExe() {
 		if (dir.length === 0) continue;
 		const cmd = join(dir, 'dsh.cmd');
 		if (!existsSync(cmd)) continue;
-		// 布局：<安装目录>\\resources\\runtime\\cli\\bin\\dsh.cmd → 往上四层就是安装目录
+		// 布局：<安装目录>\resources\runtime\cli\bin\dsh.cmd → 往上四层就是安装目录
 		const exe = resolve(dir, '..', '..', '..', '..', 'DeepSeek Harness.exe');
 		if (existsSync(exe)) return exe;
 	}
@@ -116,14 +116,14 @@ const toolsVersion = runtimeVersion('@deepseek-ai/dsh-tools');
 if (dshVersion === undefined) fail('读取 dsh 运行时版本', `找不到 ${join(RUNTIME_DIST, 'node_modules')}`);
 else pass('读取 dsh 运行时版本', `dsh ${dshVersion}；@deepseek-ai/dsh-tools ${toolsVersion ?? '未找到'}`);
 
-// ── 1. profile 是否存在 ──────────────────────────────────────────────
+// ── 1. profile 是否存在 ──────────────────────────────────────────────────
 if (!existsSync(join(profileDir, 'package.json'))) {
 	fail(`profile ${args.profile} 存在`, profileDir);
 } else {
 	pass(`profile ${args.profile} 存在`, profileDir);
 }
 
-// ── 2. dsh-github 的版本门 ───────────────────────────────────────────
+// ── 2. dsh-github 的版本门 ───────────────────────────────────────────────
 const ghManifestPath = join(profileDir, 'node_modules', 'dsh-github', 'package.json');
 const ghManifest = readJson(ghManifestPath);
 if (ghManifest === undefined) {

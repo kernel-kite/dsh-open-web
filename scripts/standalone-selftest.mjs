@@ -11,7 +11,7 @@
  * 用法：
  *   node scripts/standalone-selftest.mjs               # 用临时 DSH_HOME（不碰本机配置）
  *   node scripts/standalone-selftest.mjs --idle 4000   # 额外验证空闲回收
- *   node scripts/standalone-selftest.mjs --command "C:\\path\\dsh.cmd"
+ *   node scripts/standalone-selftest.mjs --command "C:\path\dsh.cmd"
  */
 
 import { mkdtemp, rm } from 'node:fs/promises';

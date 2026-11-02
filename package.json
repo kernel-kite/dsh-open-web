@@ -1,0 +1,41 @@
+{
+  "name": "@local/dsh-open-web",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "description": "在系统默认浏览器一键打开已登录的网页版 DeepSeek Harness（宿主端零依赖插件）。 / Opens the signed-in DeepSeek Harness Web GUI in the default browser.",
+  "exports": {
+    ".": "./index.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "standalone-web.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "README.md",
+    "scripts/check-env.mjs",
+    "scripts/selftest.mjs",
+    "scripts/domtest.mjs",
+    "scripts/standalone-selftest.mjs"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "keywords": [
+    "dsh-plugin",
+    "dsh",
+    "deepseek-harness",
+    "web",
+    "browser"
+  ],
+  "license": "MIT"
+}

@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Open Web UI",
+    "description": "Opens the signed-in DeepSeek Harness Web GUI in your default browser, with no token or extra setup required."
+  }
+}

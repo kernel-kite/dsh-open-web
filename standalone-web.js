@@ -154,7 +154,7 @@ export function candidateLaunchers(env = process.env) {
  */
 function quoteWin(value) {
 	const text = String(value);
-	if (/[\s"&|<>^()]/.test(text)) return `"${text}"`;
+	if (/[\\s"&|<>^()]/.test(text)) return `"${text}"`;
 	return text;
 }
 
@@ -169,7 +169,7 @@ export function spawnShape(launcher, appArgs) {
 		const inner = [launcher.script, ...appArgs].map(quoteWin).join(' ');
 		return {
 			command: launcher.comspec,
-			// `/s` 会剥掉最外层那一对引号，于是 `""C:\a b\dsh.cmd" web …"` 是标准写法。
+			// `/s` 会剥掉最外层那一对引号，于是 `""C:\\a b\\dsh.cmd" web …"` 是标准写法。
 			args: ['/d', '/s', '/c', `"${inner}"`],
 			options: { windowsVerbatimArguments: true }
 		};
@@ -191,7 +191,7 @@ export function parseUrlLine(line) {
 	const at = text.indexOf(URL_PREFIX);
 	if (at === -1) return undefined;
 	const rest = text.slice(at + URL_PREFIX.length).trim();
-	if (!/^https?:\/\/\S+$/.test(rest)) return undefined;
+	if (!/^https?:\\/\\/\\S+$/.test(rest)) return undefined;
 	return rest;
 }
 
@@ -208,12 +208,12 @@ export function expandEnvPath(text, env = process.env) {
 		const value = key === undefined ? undefined : env[key];
 		return typeof value === 'string' ? value : whole;
 	});
-	out = out.replace(/\$\{?([A-Za-z_][A-Za-z0-9_]*)\}?/g, (whole, name) => {
+	out = out.replace(/\\$\\{?([A-Za-z_][A-Za-z0-9_]*)\\}?/g, (whole, name) => {
 		const value = env[name];
 		return typeof value === 'string' ? value : whole;
 	});
 	if (out === '~') return env.USERPROFILE ?? env.HOME ?? out;
-	if (out.startsWith('~/') || out.startsWith('~\\')) {
+	if (out.startsWith('~/') || out.startsWith('~\\\\')) {
 		const home = env.USERPROFILE ?? env.HOME;
 		if (typeof home === 'string') out = join(home, out.slice(2));
 	}
@@ -264,7 +264,7 @@ export function findTokenUrl(logPath, origin, env = process.env) {
 		return undefined;
 	}
 	let found;
-	for (const line of text.split(/\r?\n/)) {
+	for (const line of text.split(/\\r?\\n/)) {
 		const url = parseUrlLine(line);
 		if (url === undefined) continue;
 		try {
@@ -318,12 +318,12 @@ function lineSplitter(handler) {
 	let buffer = '';
 	return (chunk) => {
 		buffer += chunk;
-		let index = buffer.indexOf('\n');
+		let index = buffer.indexOf('\\n');
 		while (index !== -1) {
-			const line = buffer.slice(0, index).replace(/\r$/, '');
+			const line = buffer.slice(0, index).replace(/\\r$/, '');
 			buffer = buffer.slice(index + 1);
 			handler(line);
-			index = buffer.indexOf('\n');
+			index = buffer.indexOf('\\n');
 		}
 		if (buffer.length > 65536) buffer = buffer.slice(-8192);
 	};
@@ -449,7 +449,7 @@ export function createStandaloneController({ logger, config: rawConfig, env = pr
 	}
 
 	function tailText() {
-		const text = tail.join('\n');
+		const text = tail.join('\\n');
 		return text.length <= TAIL_TEXT_LIMIT ? text : `…${text.slice(-TAIL_TEXT_LIMIT)}`;
 	}
 
@@ -527,7 +527,7 @@ export function createStandaloneController({ logger, config: rawConfig, env = pr
 
 			const timer = setTimeout(() => {
 				settle(new Error(
-					`等待 dsh web 启动超时（${config.bootTimeoutMs} ms，启动方式 ${launcher.id}）。日志尾部：\n${tailText()}`
+					`等待 dsh web 启动超时（${config.bootTimeoutMs} ms，启动方式 ${launcher.id}）。日志尾部：\\n${tailText()}`
 				));
 			}, config.bootTimeoutMs);
 
@@ -548,7 +548,7 @@ export function createStandaloneController({ logger, config: rawConfig, env = pr
 			child.once('exit', (code, signal) => {
 				const gone = `dsh web 子进程已退出（code=${code}, signal=${signal}）`;
 				if (!settled) {
-					settle(new Error(`${gone}，且未打印地址。日志尾部：\n${tailText()}`));
+					settle(new Error(`${gone}，且未打印地址。日志尾部：\\n${tailText()}`));
 					return;
 				}
 				// 就绪后退出：清掉缓存，下次调用会重新拉起。
@@ -587,7 +587,7 @@ export function createStandaloneController({ logger, config: rawConfig, env = pr
 				failures.push(`${launcher.id}: ${messageOf(error)}`);
 			}
 		}
-		throw new Error(`所有启动方式都失败：\n- ${failures.join('\n- ')}`);
+		throw new Error(`所有启动方式都失败：\\n- ${failures.join('\\n- ')}`);
 	}
 
 	/**
